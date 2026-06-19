@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concierge — your AI assistant, set up in one paste</title>
+<meta name="description" content="Set up Claude Code on your Mac with a curated pack of skills — one copy-paste command. Morning brief, email digest, research, and more." />
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --ink:#eef1f6; --muted:#9aa3b2;
+    --line:#2a2f3a; --gold:#e7b667; --gold2:#f3d199; --green:#6fcf97; --accent:#8aa6ff;
+    --radius:16px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#1b2030 0%,var(--bg) 55%);
+       color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold2);text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 16px var(--gold)}
+  .nav a{color:var(--muted);margin-left:18px;font-size:14px}
+  .nav a:hover{color:var(--ink)}
+
+  /* hero */
+  .hero{padding:46px 0 26px;text-align:center}
+  .kicker{color:var(--gold);font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+  h1{font-size:clamp(30px,5vw,52px);line-height:1.07;margin:14px 0 10px;font-weight:800}
+  h1 .g{background:linear-gradient(120deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:clamp(16px,2.2vw,19px);max-width:620px;margin:0 auto}
+  .meta{margin-top:14px;color:var(--muted);font-size:13.5px}
+  .meta b{color:var(--ink)}
+
+  /* command box */
+  .cmd{margin:26px auto 6px;max-width:720px;background:var(--panel);border:1px solid var(--line);
+       border-radius:14px;display:flex;align-items:center;gap:12px;padding:14px 14px 14px 18px;text-align:left}
+  .cmd .prompt{color:var(--green);font-family:var(--mono)}
+  .cmd code{font-family:var(--mono);font-size:14.5px;color:var(--ink);overflow:auto;white-space:nowrap;flex:1}
+  .copy{flex:none;border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+        font-weight:600;font-size:13.5px;padding:9px 14px;border-radius:10px;cursor:pointer;transition:.15s}
+  .copy:hover{border-color:var(--gold);color:var(--gold2)}
+  .copy.done{border-color:var(--green);color:var(--green)}
+  .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+  section{padding:42px 0}
+  h2{font-size:clamp(22px,3.4vw,30px);margin:0 0 6px;font-weight:800}
+  .lead{color:var(--muted);margin:0 0 26px}
+
+  /* steps */
+  .step{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center;
+        padding:22px 0;border-top:1px solid var(--line)}
+  .step:first-of-type{border-top:none}
+  .step .txt{max-width:420px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+       background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;font-weight:800;font-size:15px;margin-bottom:10px}
+  .step h3{margin:0 0 6px;font-size:19px}
+  .step p{margin:0;color:var(--muted)}
+  .step .opt{display:inline-block;margin-top:8px;font-size:12px;color:var(--gold);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+  /* mac window mock */
+  .win{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+       box-shadow:0 24px 60px rgba(0,0,0,.45)}
+  .bar{display:flex;gap:7px;align-items:center;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .r{background:#ff5f57}.y{background:#febc2e}.gr{background:#28c840}
+  .bar .ttl{margin-left:8px;color:var(--muted);font-size:12px}
+  .scr{padding:16px 16px 18px;font-family:var(--mono);font-size:13px;min-height:120px}
+  .scr .c{color:var(--green)} .scr .m{color:var(--muted)} .scr .a{color:var(--accent)} .scr .gd{color:var(--gold2)}
+  .ui{padding:16px;display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;align-items:center;justify-content:space-between;background:var(--panel2);
+       border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14px}
+  .toggle{width:38px;height:22px;border-radius:999px;background:#33384400;border:1px solid var(--line);position:relative}
+  .toggle.on{background:var(--green)}
+  .toggle b{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+  .toggle.on b{left:18px}
+
+  /* features */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h4{margin:0 0 4px;font-size:15.5px}
+  .card p{margin:0;color:var(--muted);font-size:13.5px}
+
+  .trust{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+  .trust h2{font-size:21px}
+  .trust ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+  .trust li{margin:6px 0}
+
+  footer{padding:34px 0 50px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line);margin-top:20px}
+
+  @media(max-width:720px){
+    .step{grid-template-columns:1fr;gap:16px}
+    .grid{grid-template-columns:1fr}
+    .cmd code{font-size:12.5px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="dot"></span> Concierge</div>
+    <nav class="nav">
+      <a href="#how">How it works</a>
+      <a href="#whatyouget">What you get</a>
+      <a href="#trust">Privacy</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="kicker">For Mac</div>
+    <h1>Your AI assistant,<br><span class="g">set up in one paste.</span></h1>
+    <p class="sub">Concierge installs Claude Code on your Mac with a curated pack of skills —
+       email digests, research, writing help and more. Copy one line, you're done.</p>
+
+    <div class="cmd">
+      <span class="prompt">$</span>
+      <code id="cmd">curl -fsSL https://mcevoyinit.github.io/concierge-site/install.sh | bash</code>
+      <button class="copy" id="copyBtn" onclick="copyCmd()">Copy</button>
+    </div>
+    <div class="hint">Paste it into <b>Terminal</b> and press Enter. No coding required.</div>
+    <div class="meta">macOS &nbsp;·&nbsp; about <b>2 minutes</b> &nbsp;·&nbsp; free &nbsp;·&nbsp; <a href="install.sh">view the install script</a></div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="lead">Three quick steps you do yourself — the installer handles everything else.</p>
+
+    <!-- 1 -->
+    <div class="step">
+      <div class="txt">
+        <div class="num">1</div>
+        <h3>Copy &amp; run the command</h3>
+        <p>Open Terminal (press <b>⌘ Space</b>, type “Terminal”, hit Enter), paste the line
+           from the top of this page, and press Enter. It installs Claude Code and the skill pack.</p>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="gr"></i><span class="ttl">Terminal</span></div>
+        <div class="scr">
+          <div><span class="c">$</span> curl -fsSL …/install.sh | bash</div>
+          <div class="gd">  Concierge</div>
+          <div class="m">  ==&gt; Checking your Mac … <span class="c">ok</span></div>
+          <div class="m">  ==&gt; Installing Claude Code … <span class="c">ok</span></div>
+          <div class="m">  ==&gt; Installing skills … <span class="c">9 ready</span></div>
+          <div><span class="c">✓</span> Concierge is ready.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="step">
+      <div class="txt">
+        <div class="num">2</div>
+        <h3>Sign in to Claude</h3>
+        <p>Type <b>claude</b> and press Enter. A browser window opens — sign in with your
+           Claude account (the same one as claude.ai).</p>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="gr"></i><span class="ttl">Sign in</span></div>
+        <div class="ui">
+          <div class="row"><span>Continue with your Claude account</span><span class="gd">→</span></div>
+          <div class="row m"><span>you@email.com</span><span>•••••••</span></div>
+          <div class="row" style="justify-content:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;font-weight:700">Sign in</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="step">
+      <div class="txt">
+        <div class="num">3</div>
+        <h3>Connect Gmail &amp; Calendar</h3>
+        <p>This powers your <b>email digest</b> and daily brief. Go to
+           <a href="https://claude.ai/settings/connectors">claude.ai → Connectors</a>
+           and switch on Gmail and Google Calendar.</p>
+        <span class="opt">Requires a Claude Pro or Max plan</span>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="gr"></i><span class="ttl">claude.ai · Connectors</span></div>
+        <div class="ui">
+          <div class="row"><span>📧 &nbsp;Google Gmail</span><span class="toggle on"><b></b></span></div>
+          <div class="row"><span>📅 &nbsp;Google Calendar</span><span class="toggle on"><b></b></span></div>
+          <div class="row m"><span>💬 &nbsp;Slack</span><span class="toggle"><b></b></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- optional -->
+    <div class="step">
+      <div class="txt">
+        <div class="num">+</div>
+        <h3>You’re set — try it</h3>
+        <p>Run <b>claude</b>, then type <b>/oracle</b> and describe what you need —
+           it routes you to the right tool. Or <b>/email-digest</b> for a summary of your inbox.</p>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="gr"></i><span class="ttl">claude</span></div>
+        <div class="scr">
+          <div><span class="a">/email-digest</span></div>
+          <div class="m">  Scanning your inbox…</div>
+          <div>  💰 2 bills due this week</div>
+          <div>  ✈️ flight confirmation — Sat</div>
+          <div>  📌 3 emails need a reply</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section id="whatyouget">
+    <h2>What you get</h2>
+    <p class="lead">A curated set of skills, ready the moment it installs.</p>
+    <div class="grid">
+      <div class="card"><h4>📨 Email digest</h4><p>A clean summary of your inbox — bills, travel, what needs a reply.</p></div>
+      <div class="card"><h4>🧭 Oracle</h4><p>Not sure which tool? Describe the problem and it picks the right one.</p></div>
+      <div class="card"><h4>🔎 Deep research</h4><p>Multi-source, fact-checked research with citations on any question.</p></div>
+      <div class="card"><h4>👤 People &amp; company research</h4><p>Background checks and due-diligence dossiers in minutes.</p></div>
+      <div class="card"><h4>📊 Market sizing</h4><p>Rigorous TAM/SAM/SOM estimates for any market or idea.</p></div>
+      <div class="card"><h4>✍️ Humanizer</h4><p>Strips the “AI sound” out of any text so it reads like you.</p></div>
+      <div class="card"><h4>💡 Brainstorm</h4><p>Thinks a project through with you before anything gets built.</p></div>
+      <div class="card"><h4>🩺 Mac health</h4><p>Tells you what’s really eating your Mac’s memory — and what’s safe to close.</p></div>
+      <div class="card"><h4>🎙️ Biographer</h4><p>An agent that interviews you and builds a private profile over time.</p></div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section id="trust">
+    <div class="trust">
+      <h2>Private by design</h2>
+      <ul>
+        <li>It’s a <b>clean-room</b> install — it sets up the tools on <i>your</i> Mac with <i>your</i> accounts. No one else’s data is ever included.</li>
+        <li>Your keys and sign-ins stay on your machine. Nothing is sent to us.</li>
+        <li>The install script is <a href="install.sh">open to read</a> before you run it.</li>
+        <li>Re-run the command any time to update — it backs up your setup first and never overwrites your settings.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Concierge · set up in one paste · macOS<br>
+    Built with Claude Code.
+  </footer>
+</div>
+
+<script>
+function copyCmd(){
+  var text = document.getElementById('cmd').innerText.trim();
+  var btn = document.getElementById('copyBtn');
+  var done = function(){ btn.textContent='Copied!'; btn.classList.add('done');
+    setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('done'); },1800); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } else { fallback(); }
+  function fallback(){
+    var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
+    t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); done();
+  }
+}
+</script>
+</body>
+</html>
