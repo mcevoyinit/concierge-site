@@ -75,14 +75,20 @@ else
     die "Claude install failed. Install it manually from docs.claude.com then re-run."
   fi
 fi
-# Make sure the install dir is on PATH for this and future shells.
-if [ -d "$HOME_DIR/.local/bin" ] && ! echo ":$PATH:" | grep -q ":$HOME_DIR/.local/bin:"; then
+# Make sure ~/.local/bin is on PATH now and in every future shell.
+# zsh is the macOS default — ensure ~/.zshrc has it even if the file doesn't
+# exist yet (a truly fresh Mac has no ~/.zshrc). Add to bash too if present.
+if [ -d "$HOME_DIR/.local/bin" ]; then
   export PATH="$HOME_DIR/.local/bin:$PATH"
-  for prof in "$HOME_DIR/.zshrc" "$HOME_DIR/.bash_profile"; do
-    [ -f "$prof" ] && ! grep -q '.local/bin' "$prof" 2>/dev/null \
-      && printf '\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$prof"
-  done
-  ok "Added ~/.local/bin to your PATH."
+  added=""
+  ZRC="$HOME_DIR/.zshrc"
+  if ! grep -qs '\.local/bin' "$ZRC" 2>/dev/null; then
+    printf '\n# Added by Concierge\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$ZRC" && added="yes"
+  fi
+  if [ -f "$HOME_DIR/.bash_profile" ] && ! grep -qs '\.local/bin' "$HOME_DIR/.bash_profile"; then
+    printf '\n# Added by Concierge\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$HOME_DIR/.bash_profile"
+  fi
+  [ -n "$added" ] && ok "Put Claude on your PATH for new terminal windows."
 fi
 
 # --- 3. fetch the Concierge bundle -------------------------------------------
@@ -155,10 +161,14 @@ fi
 # --- 6. guided onboarding ----------------------------------------------------
 step "Last steps — these need you (one minute)"
 cat <<EOF
-    ${C_B}1. Sign in${C_0}
-       Run ${C_B}claude${C_0} in your terminal and sign in with your Claude account.
+    ${C_B}1. Open a NEW Terminal window${C_0}
+       Close this one and open a fresh Terminal (so it sees Claude). Or run:
+       ${C_D}source ~/.zshrc${C_0}
 
-    ${C_B}2. Connect Gmail + Calendar${C_0}  (powers ${C_B}/email-digest${C_0})
+    ${C_B}2. Sign in${C_0}
+       Type ${C_B}claude${C_0} and press Enter, then sign in with your Claude account.
+
+    ${C_B}3. Connect Gmail + Calendar${C_0}  (powers ${C_B}/email-digest${C_0})
        Open  ${C_D}https://claude.ai/settings/connectors${C_0}
        and turn on the Google Gmail and Google Calendar connectors.
        (Requires a Claude Pro or Max plan.)
@@ -175,9 +185,9 @@ fi
 printf '\n%s%s Concierge is ready.%s\n' "$C_G" "✓" "$C_0"
 cat <<EOF
 
-    Try it now:
+    Try it now (in a new Terminal window):
        ${C_B}claude${C_0}        then type   ${C_B}/oracle${C_0}   (it routes you to the right tool)
-                          or       ${C_B}/email-digest${C_0}   (after step 2 above)
+                          or       ${C_B}/email-digest${C_0}   (after step 3 above)
 
     What you've got: brainstorm · oracle · deep research (feynman) ·
     humanizer · person & company research · market sizing · email digest ·
