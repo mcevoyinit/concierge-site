@@ -15,7 +15,7 @@
 #   CLAUDE_HOME             target home               (default $HOME)
 set -uo pipefail
 
-VERSION="${CONCIERGE_VERSION:-0.1.0}"
+VERSION="${CONCIERGE_VERSION:-0.2.0}"
 BASE_URL="${CONCIERGE_BASE_URL:-https://mcevoyinit.github.io/concierge-site}"
 HOME_DIR="${CLAUDE_HOME:-$HOME}"
 CLAUDE_DIR="$HOME_DIR/.claude"
@@ -146,6 +146,8 @@ keep_or_offer() { # $1 = filename in bundle root
 keep_or_offer settings.json
 keep_or_offer CLAUDE.md
 keep_or_offer MEMORY.md
+# Seed a to-do file so morning-brief has somewhere to read and write.
+[ -f "$HOME_DIR/todo.md" ] || printf '# To-do\n\n' > "$HOME_DIR/todo.md"
 ok "Skills, commands, and branding installed."
 
 # --- 5. verify ---------------------------------------------------------------
@@ -189,9 +191,9 @@ cat <<EOF
        ${C_B}claude${C_0}        then type   ${C_B}/oracle${C_0}   (it routes you to the right tool)
                           or       ${C_B}/email-digest${C_0}   (after step 3 above)
 
-    What you've got: brainstorm · oracle · deep research (feynman) ·
-    humanizer · person & company research · market sizing · email digest ·
-    mac health · a personal biographer agent.
+    What you've got: morning brief · email digest · oracle · brainstorm ·
+    deep research (feynman) · humanizer · person & company research ·
+    market sizing · mac health · a personal biographer agent.
 
     Re-run this installer any time to update. Enjoy.
 EOF
