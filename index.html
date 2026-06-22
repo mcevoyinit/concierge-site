@@ -107,6 +107,8 @@
   .trust h2{font-size:21px}
   .trust ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
   .trust li{margin:6px 0}
+  .trust li code{font-family:var(--mono);font-size:12px;background:var(--panel2);
+      border:1px solid var(--line);border-radius:6px;padding:2px 7px;word-break:break-all;color:var(--ink)}
 
   footer{padding:34px 0 50px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line);margin-top:20px}
 
@@ -263,7 +265,8 @@
         <li>It’s a <b>clean-room</b> install — it sets up the tools on <i>your</i> Mac with <i>your</i> accounts. No one else’s data is ever included.</li>
         <li>Your keys and sign-ins stay on your machine. Nothing is sent to us.</li>
         <li>The install script is <a href="install.sh">open to read</a> before you run it.</li>
-        <li>Re-run the command any time to update — it backs up your setup first and never overwrites your settings.</li>
+        <li>Re-run any time to update — it only manages its own files and never overwrites your skills or settings.</li>
+        <li>Changed your mind? <code>curl -fsSL https://mcevoyinit.github.io/concierge-site/uninstall.sh | bash</code> removes only what Concierge added — your own stuff stays.</li>
       </ul>
     </div>
   </section>

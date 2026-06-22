@@ -160,9 +160,10 @@ install_items agents
 [ -d "$B/concierge" ] && cp -R "$B/concierge/." "$CONC_DIR/" 2>/dev/null || true
 
 # Config files: install only if absent, never overwrite the user's.
+# Record ones we actually install so the uninstaller knows they're ours.
 keep_or_offer() { local f="$1"; [ -f "$B/$f" ] || return 0
   if [ -f "$CLAUDE_DIR/$f" ]; then warn "Kept your existing $f."
-  else cp "$B/$f" "$CLAUDE_DIR/$f"; ok "Installed $f."; fi; }
+  else cp "$B/$f" "$CLAUDE_DIR/$f"; echo "$f" >> "$NEWOWNED"; ok "Installed $f."; fi; }
 keep_or_offer settings.json
 keep_or_offer CLAUDE.md
 keep_or_offer MEMORY.md
