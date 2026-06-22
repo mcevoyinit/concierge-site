@@ -196,11 +196,11 @@ cat <<EOF
     ${C_B}2. Sign in${C_0}
        Type ${C_B}claude${C_0} and press Enter, then sign in with your Claude account.
 
-    ${C_B}3. Connect Gmail + Calendar${C_0}  (powers ${C_B}/morning-brief${C_0} + ${C_B}/email-digest${C_0})
-       These connect through your Claude account (Google only trusts claude.ai),
-       then work inside Claude Code automatically. Open
-       ${C_D}https://claude.ai/settings/connectors${C_0}
-       and switch on Gmail and Google Calendar. (Claude Pro or Max plan.)
+    ${C_B}3. Authorize Gmail + Calendar${C_0}  (one time, in your browser)
+       Claude Code can't run Google's sign-in itself, so you authorize once at
+       ${C_D}https://claude.ai/settings/connectors${C_0} (switch on Gmail + Calendar).
+       After that, ${C_B}/morning-brief${C_0} and ${C_B}/email-digest${C_0} use them right here in
+       Claude Code — you never go back to the browser. (Claude Pro or Max plan.)
 EOF
 if [ "${CONCIERGE_NONINTERACTIVE:-0}" != "1" ] && [ -e /dev/tty ]; then
   reply="$(ask "    Open the connectors page in your browser now? [Y/n] ")"
