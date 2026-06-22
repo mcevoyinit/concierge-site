@@ -115,40 +115,66 @@ fi
 mkdir -p "$WORK/bundle"
 tar xzf "$TARBALL" -C "$WORK/bundle" || die "Could not extract the bundle."
 
-# --- 4. back up, then merge into ~/.claude (never clobber personal files) -----
+# --- 4. install into ~/.claude — OWN-ONLY, self-flushing, never clobbers ------
+# Concierge tracks exactly what it installed (concierge/owned.txt + version).
+# Every run re-applies its own pack to a known-good state and leaves everything
+# else alone. A same-named skill the user already had (and Concierge did NOT
+# install) is kept; ours is parked as <name>.concierge. Re-runs are idempotent.
 step "Installing into ~/.claude"
 mkdir -p "$CLAUDE_DIR"
-if [ -n "$(ls -A "$CLAUDE_DIR" 2>/dev/null || true)" ]; then
-  BAK="$CLAUDE_DIR.bak-$(date +%Y%m%d-%H%M%S)"
-  cp -R "$CLAUDE_DIR" "$BAK"
-  ok "Backed up your existing setup to $(basename "$BAK")."
-fi
-
 B="$WORK/bundle"
-# Our content — safe to overwrite (skills/commands/agents/statusline/banner).
-for d in skills commands agents concierge; do
-  [ -d "$B/$d" ] && { mkdir -p "$CLAUDE_DIR/$d"; cp -R "$B/$d/." "$CLAUDE_DIR/$d/"; }
-done
-[ -f "$B/statusline.sh" ] && { cp "$B/statusline.sh" "$CLAUDE_DIR/statusline.sh"; chmod +x "$CLAUDE_DIR/statusline.sh"; }
+CONC_DIR="$CLAUDE_DIR/concierge"
+MARKER="$CONC_DIR/version"
+OWNED="$CONC_DIR/owned.txt"
+mkdir -p "$CONC_DIR"
+PREV_VER="$(cat "$MARKER" 2>/dev/null || echo "")"
 
-# Personal-config files — install only if absent; otherwise leave a *.concierge copy.
-keep_or_offer() { # $1 = filename in bundle root
-  local f="$1"
-  [ -f "$B/$f" ] || return 0
-  if [ -f "$CLAUDE_DIR/$f" ]; then
-    cp "$B/$f" "$CLAUDE_DIR/$f.concierge"
-    warn "Kept your existing $f (new version saved as $f.concierge)."
-  else
-    cp "$B/$f" "$CLAUDE_DIR/$f"
-    ok "Installed $f."
-  fi
+was_owned() { grep -qxF "$1" "$OWNED" 2>/dev/null; }
+NEWOWNED="$(mktemp)"
+kept=0
+
+install_items() { # $1 = subdir under skills/commands/agents
+  local sub="$1"; [ -d "$B/$sub" ] || return 0
+  mkdir -p "$CLAUDE_DIR/$sub"
+  local path name key target
+  for path in "$B/$sub"/*; do
+    [ -e "$path" ] || continue
+    name="$(basename "$path")"; key="$sub/$name"; target="$CLAUDE_DIR/$sub/$name"
+    if [ -e "$target" ] && ! was_owned "$key" && ! diff -rq "$path" "$target" >/dev/null 2>&1; then
+      # user's OWN different version exists -> keep theirs, park ours, don't claim it
+      cp -R "$path" "$target.concierge" 2>/dev/null || true
+      warn "Kept your own $key (Concierge's saved as $name.concierge)."
+      kept=$((kept+1))
+    else
+      rm -rf "$target"; cp -R "$path" "$target"   # absent / ours / identical -> (re)flush ours
+      echo "$key" >> "$NEWOWNED"
+    fi
+  done
 }
+install_items skills
+install_items commands
+install_items agents
+
+# statusline + branding are Concierge-owned
+[ -f "$B/statusline.sh" ] && { cp "$B/statusline.sh" "$CLAUDE_DIR/statusline.sh"; chmod +x "$CLAUDE_DIR/statusline.sh"; echo "statusline.sh" >> "$NEWOWNED"; }
+[ -d "$B/concierge" ] && cp -R "$B/concierge/." "$CONC_DIR/" 2>/dev/null || true
+
+# Config files: install only if absent, never overwrite the user's.
+keep_or_offer() { local f="$1"; [ -f "$B/$f" ] || return 0
+  if [ -f "$CLAUDE_DIR/$f" ]; then warn "Kept your existing $f."
+  else cp "$B/$f" "$CLAUDE_DIR/$f"; ok "Installed $f."; fi; }
 keep_or_offer settings.json
 keep_or_offer CLAUDE.md
 keep_or_offer MEMORY.md
-# Seed a to-do file so morning-brief has somewhere to read and write.
 [ -f "$HOME_DIR/todo.md" ] || printf '# To-do\n\n' > "$HOME_DIR/todo.md"
-ok "Skills, commands, and branding installed."
+
+sort -u "$NEWOWNED" > "$OWNED"; rm -f "$NEWOWNED"
+printf '%s\n' "$VERSION" > "$MARKER"
+n=$(wc -l < "$OWNED" | tr -d ' ')
+if   [ -z "$PREV_VER" ];               then ok "Concierge v$VERSION installed ($n items)."
+elif [ "$PREV_VER" = "$VERSION" ];     then ok "Concierge v$VERSION re-flushed — clean and up to date ($n items)."
+else ok "Updated Concierge v$PREV_VER → v$VERSION ($n items)."; fi
+[ "$kept" -gt 0 ] && info "$kept of your own skills were kept untouched."
 
 # --- 5. verify ---------------------------------------------------------------
 step "Verifying"
