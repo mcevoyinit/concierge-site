@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap');
   :root{
     --ground:#FBFAF7; --ink:#1C1F26; --deep:#10243A; --gold:#B08A4F;
     --line:#E6E1D6; --mute:#6B7280;
@@ -11,129 +11,144 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{background:#d8d4cb}
-  @page{ size:210mm 405mm; margin:0 }
-  @media print{ html,body{background:var(--ground)} .page{margin:0} }
-  .page{width:794px;background:var(--ground);color:var(--ink);font-family:var(--sans);
-        padding:0 0 50px;position:relative;margin:0 auto}
-  .pad{padding:0 70px}
+  @page{ size:210mm 392mm; margin:0 }
+  @media print{ html,body{background:#FBFAF7} .page{margin:0} }
+  .page{width:794px;min-height:1123px;margin:0 auto;background:var(--ground);
+        color:var(--ink);font-family:var(--sans);padding:64px 70px 56px;position:relative}
   .label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  .goldrule{width:46px;height:2px;background:var(--gold);border:0}
+  .rule{height:1px;background:var(--line);border:0;margin:0}
+  .goldrule{width:48px;height:2px;background:var(--gold);border:0}
 
-  /* top band: brand */
-  .top{background:var(--deep);color:#F2EFE8;padding:20px 70px;display:flex;align-items:center;justify-content:space-between}
-  .top .brand{font-family:var(--serif);font-size:23px;font-weight:600;display:flex;align-items:center;gap:10px}
-  .top .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
-  .top .tagline{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#A9B4C2}
+  /* header */
+  header{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:1px solid var(--line)}
+  .brand{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--deep);letter-spacing:.01em;display:flex;align-items:center;gap:11px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold)}
+  .brand small{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:500}
 
   /* hero */
-  .hero{text-align:center;padding:44px 70px 12px}
-  .hero h1{font-family:var(--serif);font-weight:500;color:var(--deep);font-size:44px;line-height:1.1;letter-spacing:-.01em}
-  .hero .lead{font-size:15.5px;color:var(--mute);max-width:430px;margin:16px auto 0;line-height:1.6}
+  .hero{padding:54px 0 40px;text-align:center}
+  .hero h1{font-family:var(--serif);font-weight:500;color:var(--deep);font-size:52px;line-height:1.08;letter-spacing:-.01em}
+  .hero p{font-size:17px;color:var(--mute);max-width:480px;margin:20px auto 0;line-height:1.6}
+  .hero .goldrule{margin:26px auto 0}
 
-  /* the brief card — the hero artifact */
-  .brief-wrap{padding:26px 70px 8px;display:flex;justify-content:center}
-  .brief{width:460px;background:#fff;border:1px solid var(--line);border-radius:4px;
-         box-shadow:0 18px 50px rgba(16,36,58,.10);padding:26px 30px 28px;position:relative}
-  .brief::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:4px 0 0 4px}
-  .brief .bh{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
-  .brief .bh .t{font-family:var(--serif);font-size:18px;color:var(--deep);font-weight:600}
-  .brief .bh .d{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  .brief .row{display:flex;gap:12px;padding:9px 0}
-  .brief .row .ic{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ground);border:1px solid var(--line);
-       display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px}
-  .brief .row .tx{font-size:13px;color:var(--ink);line-height:1.5}
-  .brief .row .tx b{color:var(--deep);font-weight:600}
-  .brief .row .tx span{color:var(--mute)}
-  .brief .foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--mute);font-style:italic;text-align:center}
-
-  .hero-cap{text-align:center;font-size:12.5px;color:var(--mute);padding:14px 70px 0}
-  .hero-cap b{color:var(--deep);font-family:var(--serif);font-weight:600}
+  /* problem */
+  .problem{text-align:center;padding:6px 40px 40px;font-family:var(--serif);font-size:19px;
+           line-height:1.6;color:var(--ink)}
 
   /* pillars */
-  .pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;padding:30px 70px 6px;margin-top:14px;border-top:1px solid var(--line)}
-  .pillar .n{font-family:var(--serif);font-size:13px;color:var(--gold);margin-bottom:9px}
-  .pillar h3{font-family:var(--serif);font-size:17px;color:var(--deep);font-weight:600;margin-bottom:8px}
-  .pillar p{font-size:13px;color:var(--mute);line-height:1.6}
+  .pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px;padding:34px 0;border-top:1px solid var(--line)}
+  .pillar h3{font-family:var(--serif);font-size:18px;color:var(--deep);font-weight:600;margin-bottom:9px}
+  .pillar .n{font-family:var(--serif);font-size:13px;color:var(--gold);margin-bottom:12px}
+  .pillar p{font-size:13.5px;color:var(--mute);line-height:1.62}
 
   /* how */
-  .how{padding:26px 70px 6px}
-  .how .label{display:block;text-align:center;margin-bottom:22px}
-  .steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+  .how{padding:34px 0;border-top:1px solid var(--line)}
+  .how .label{display:block;text-align:center;margin-bottom:26px}
+  .steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px}
   .step{text-align:center}
-  .step .num{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);
-       font-family:var(--serif);font-size:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-  .step h4{font-family:var(--serif);font-size:15px;color:var(--deep);font-weight:600;margin-bottom:6px}
-  .step p{font-size:12px;color:var(--mute);line-height:1.55}
+  .step .num{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);
+       font-family:var(--serif);font-size:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .step h4{font-family:var(--serif);font-size:15.5px;color:var(--deep);font-weight:600;margin-bottom:7px}
+  .step p{font-size:12.5px;color:var(--mute);line-height:1.6}
 
   /* trust band */
-  .trust{background:var(--deep);color:#EDEBE5;margin-top:28px;padding:26px 70px;text-align:center}
-  .trust p{font-family:var(--serif);font-size:16.5px;line-height:1.6;max-width:560px;margin:0 auto}
+  .trust{background:var(--deep);color:#EDEBE5;margin:34px -70px 0;padding:30px 70px;text-align:center}
+  .trust p{font-family:var(--serif);font-size:17px;line-height:1.6;max-width:560px;margin:0 auto;font-weight:400}
   .trust .em{color:var(--gold)}
 
-  /* footer */
-  .foot{display:grid;grid-template-columns:1fr 1fr;padding:0 70px}
-  .foot>div{padding:26px 0}
-  .foot .price{border-right:1px solid var(--line);padding-right:32px}
-  .foot .cta{padding-left:32px}
-  .foot h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:11px}
-  .foot .big{font-family:var(--serif);font-size:20px;color:var(--deep);line-height:1.35}
-  .foot .sub{font-size:12px;color:var(--mute);margin-top:8px;line-height:1.5}
-  .foot .book{font-family:var(--serif);font-size:20px;color:var(--deep)}
-  .foot .contact{font-size:13px;color:var(--ink);margin-top:9px}
-  .sign{text-align:center;font-size:12px;color:var(--mute);padding:18px 70px 0;margin-top:6px;border-top:1px solid var(--line)}
+  /* footer: price + cta */
+  .foot{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line);margin-top:0}
+  .foot>div{padding:30px 0}
+  .foot .price{border-right:1px solid var(--line);padding-right:34px}
+  .foot .cta{padding-left:34px}
+  .foot h5{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:12px}
+  .foot .big{font-family:var(--serif);font-size:21px;color:var(--deep);line-height:1.35}
+  .foot .sub{font-size:12.5px;color:var(--mute);margin-top:8px;line-height:1.55}
+  .foot .book{font-family:var(--serif);font-size:21px;color:var(--deep)}
+  .foot .contact{font-size:13px;color:var(--ink);margin-top:10px}
+
+  .sign{text-align:center;font-size:12px;color:var(--mute);padding-top:24px;border-top:1px solid var(--line);margin-top:8px}
   .sign .em{color:var(--deep);font-family:var(--serif)}
 </style>
 </head>
 <body>
   <div class="page">
-    <div class="top">
+    <header>
       <div class="brand"><span class="dot"></span> Concierge</div>
-      <div class="tagline">Your inbox, handled by morning</div>
-    </div>
+      <div class="brand"><small>Your inbox, handled by morning</small></div>
+    </header>
 
     <section class="hero">
-      <h1>This is on your desk<br>before you are.</h1>
-      <p class="lead">Concierge reads your inbox overnight and leaves you one clear brief. Nothing to open, nothing to learn.</p>
+      <h1>Your inbox,<br>handled by morning.</h1>
+      <p>Concierge reads your inbox so you can run your business. One brief each morning. Nothing to learn.</p>
+      <hr class="goldrule" />
     </section>
 
-    <div class="brief-wrap">
-      <div class="brief">
-        <div class="bh"><span class="t">Your morning brief</span><span class="d">Tue 24 June</span></div>
-        <div class="row"><div class="ic">✦</div><div class="tx"><b>Three emails need you.</b> <span>A client chasing their quote, a supplier question, and a reply you owe from Friday.</span></div></div>
-        <div class="row"><div class="ic">✦</div><div class="tx"><b>Today.</b> <span>Site visit at 10:30, call with Murphy at 2. Nothing clashes.</span></div></div>
-        <div class="row"><div class="ic">✦</div><div class="tx"><b>Going cold.</b> <span>Two quotes you sent last week have had no reply. Drafts ready to chase.</span></div></div>
-        <div class="row"><div class="ic">✦</div><div class="tx"><b>Heads up.</b> <span>One invoice is nine days overdue.</span></div></div>
-        <div class="foot">Everything else was quiet. Eleven newsletters and receipts set aside.</div>
-      </div>
-    </div>
-
-    <div class="hero-cap">Your inbox eats the part of the day that should be yours. <b>Concierge hands it back.</b></div>
+    <section class="problem">
+      Your inbox eats the part of the day you should spend on the work only you can do.
+      Quotes go unanswered. Replies slip. The calendar fills without warning.
+    </section>
 
     <section class="pillars">
-      <div class="pillar"><div class="n">i.</div><h3>Set up for you</h3><p>We set it up inside your own email and calendar. Nothing to install, nothing to learn.</p></div>
-      <div class="pillar"><div class="n">ii.</div><h3>One morning brief</h3><p>Everything that matters on a single page by morning. What needs you, what is coming, what to chase.</p></div>
-      <div class="pillar"><div class="n">iii.</div><h3>Nothing falls through</h3><p>Follow ups, deadlines and replies tracked. The thing you forgot is already on the brief.</p></div>
+      <div class="pillar">
+        <div class="n">i.</div>
+        <h3>Set up for you</h3>
+        <p>We set it up inside your own email and calendar. There is nothing to install, and nothing to learn.</p>
+      </div>
+      <div class="pillar">
+        <div class="n">ii.</div>
+        <h3>One morning brief</h3>
+        <p>Everything that matters on a single page by morning. What needs you, what is coming up, what to chase.</p>
+      </div>
+      <div class="pillar">
+        <div class="n">iii.</div>
+        <h3>Nothing falls through</h3>
+        <p>Follow ups, deadlines and replies are tracked. The thing you forgot is already on the brief.</p>
+      </div>
     </section>
 
     <section class="how">
       <span class="label">How it works</span>
       <div class="steps">
-        <div class="step"><div class="num">1</div><h4>We set it up</h4><p>A short chat about your business, then we connect it to your inbox and calendar.</p></div>
-        <div class="step"><div class="num">2</div><h4>It works quietly</h4><p>Each night it reads what came in and prepares your brief and your draft replies.</p></div>
-        <div class="step"><div class="num">3</div><h4>You stay in control</h4><p>Nothing is ever sent without you. You glance, you approve, you carry on.</p></div>
+        <div class="step">
+          <div class="num">1</div>
+          <h4>We set it up</h4>
+          <p>A short conversation about your business, then we connect it to your inbox and calendar.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h4>It works quietly</h4>
+          <p>Each morning it reads what came in and prepares your brief and your draft replies.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h4>You stay in control</h4>
+          <p>Nothing is ever sent without you. You glance, you approve, you carry on.</p>
+        </div>
       </div>
     </section>
 
     <section class="trust">
-      <p>Discreet by design. It runs in your own accounts, your data stays yours, and it only ever drafts. <span class="em">You always hold the pen.</span></p>
+      <p>Discreet by design. It runs in your own accounts, your data stays yours,
+      and it only ever drafts. <span class="em">You always hold the pen.</span></p>
     </section>
 
     <section class="foot">
-      <div class="price"><h5>What it costs</h5><div class="big">A single setup fee,<br>then a simple monthly fee.</div><div class="sub">No long contracts. Cancel any time. Setup from EUR 400, then from EUR 100 a month.</div></div>
-      <div class="cta"><h5>To begin</h5><div class="book">Book a quiet twenty minute call.</div><div class="contact">{your email or phone}</div></div>
+      <div class="price">
+        <h5>What it costs</h5>
+        <div class="big">A single setup fee,<br>then a simple monthly fee.</div>
+        <div class="sub">No long contracts. Cancel any time. Setup from EUR 400, then from EUR 100 a month.</div>
+      </div>
+      <div class="cta">
+        <h5>To begin</h5>
+        <div class="book">Book a quiet twenty minute call.</div>
+        <div class="contact">{your email or phone}</div>
+      </div>
     </section>
 
-    <div class="sign">Set up and looked after by <span class="em">a real person</span>, not a faceless app.</div>
+    <div class="sign">
+      Set up and looked after by <span class="em">a real person</span>, not a faceless app.
+    </div>
   </div>
 </body>
 </html>
